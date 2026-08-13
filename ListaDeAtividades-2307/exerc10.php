@@ -3,7 +3,7 @@ $pessoa = [
     "Nome" => "Rhayanna",
     "Idade" => 22,
     "Cidade" => "Guarapuava",
-    "Tchola" => "Não, nem o que é isso."
+    "Tchola" => "Não, nem sei o que é isso."
 ];
 
 echo "<h2>Array Associativo - Dados da Pessoa</h2>";
