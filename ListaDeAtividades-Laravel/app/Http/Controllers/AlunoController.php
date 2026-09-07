@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 use App\Models\Aluno;
+use App\Http\Requests\AlunoRequest;
 use Illuminate\Http\Request;
 class AlunoController extends Controller
 {
@@ -13,15 +14,15 @@ class AlunoController extends Controller
         return view('alunos.index', ['alunos' => $query->orderBy('nome')->paginate(10)->withQueryString(), 'total' => Aluno::count()]);
     }
     public function create() { return view('alunos.create'); }
-    public function store(Request $request) {
-        $data = $request->validate(['nome' => 'required|string|max:255', 'email' => 'required|email|unique:alunos,email', 'curso' => 'required|string|max:255']);
+    public function store(AlunoRequest $request) {
+        $data = $request->validated();
         $aluno = Aluno::create($data);
         return redirect()->route('alunos.show', $aluno)->with('success', 'Aluno cadastrado!');
     }
     public function show(Aluno $aluno) { return view('alunos.show', compact('aluno')); }
     public function edit(Aluno $aluno) { return view('alunos.edit', compact('aluno')); }
-    public function update(Request $request, Aluno $aluno) {
-        $data = $request->validate(['nome' => 'required|string|max:255', 'email' => ['required', 'email', \Illuminate\Validation\Rule::unique('alunos')->ignore($aluno)], 'curso' => 'required|string|max:255']);
+    public function update(AlunoRequest $request, Aluno $aluno) {
+        $data = $request->validated();
         $aluno->update($data);
         return redirect()->route('alunos.show', $aluno)->with('success', 'Aluno atualizado!');
     }
