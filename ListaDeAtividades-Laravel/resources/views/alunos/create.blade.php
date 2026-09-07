@@ -1,1 +1,4 @@
-<h1>Alunos: create</h1>
+@extends('layouts.app')
+@section('content')
+<h1>Cadastrar aluno</h1>
+@endsection

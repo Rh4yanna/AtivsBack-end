@@ -2,7 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', fn () => view('welcome'));
+Route::get('/', fn () => view('home'));
 Route::get('/sobre', fn () => 'Sobre o projeto Laravel');
 Route::resource('alunos', \App\Http\Controllers\AlunoController::class);
 Route::get('/contato', fn () => 'Contato da escola');
