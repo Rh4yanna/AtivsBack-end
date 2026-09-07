@@ -1,1 +1,2 @@
-<h1>Alunos: edit</h1>
+@extends('layouts.app')
+@section('content')<h1>Editar aluno</h1><form method="POST" action="{{ route('alunos.update', $aluno) }}">@method('PUT') @include('alunos._form')</form>@endsection
