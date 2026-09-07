@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', fn () => view('welcome'));
 Route::get('/sobre', fn () => 'Sobre o projeto Laravel');
-Route::get('/alunos', fn () => 'Lista de alunos');
+Route::resource('alunos', \App\Http\Controllers\AlunoController::class);
 Route::get('/contato', fn () => 'Contato da escola');
 
 foreach (['produto', 'categoria', 'usuario'] as $recurso) {
