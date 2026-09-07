@@ -1,7 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Artisan;
 use App\Models\Aluno;
+use Illuminate\Support\Facades\Artisan;
+
 Artisan::command('alunos:consultar {curso?} {palavra?}', function () {
     $this->info('Quantidade de alunos: '.Aluno::count());
     $this->info('Recentes (30 dias): '.Aluno::recentes()->count());

@@ -1,66 +1,124 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Lista de Atividades — Laravel
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Sistema de alunos com Laravel 12, PHP 8.2+, Blade, SQLite, Eloquent e Laravel Breeze. As **23 atividades e os desafios** estão organizados em **12 branches cumulativas**, com um commit por atividade. A versão completa está em **tema-12-policies**, na pasta `ListaDeAtividades-Laravel`.
 
-## About Laravel
+## Executar neste computador
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+As dependências já foram instaladas e o banco local foi preparado. No terminal da pasta do repositório:
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+```powershell
+cd ListaDeAtividades-Laravel
+php artisan serve
+```
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+Acesse http://127.0.0.1:8000. Depois de alterar CSS ou JavaScript, execute `npm run build`.
 
-## Learning Laravel
+## Instalar após clonar
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+Requisitos: PHP 8.2+ com extensões do Laravel e `pdo_sqlite`, Composer e Node.js 22+ com npm.
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+```powershell
+git clone --branch tema-12-policies https://github.com/Rh4yanna/AtivsBack-end.git
+cd AtivsBack-end/ListaDeAtividades-Laravel
+composer install
+Copy-Item .env.example .env
+php artisan key:generate
+New-Item -ItemType File -Path database/database.sqlite
+php artisan migrate --seed
+npm ci
+npm run build
+php artisan serve
+```
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+No Linux/macOS, use `cp .env.example .env` e `touch database/database.sqlite` em vez dos comandos PowerShell correspondentes. O `.env.example` usa SQLite. `.env`, banco SQLite, `vendor` e `node_modules` ficam fora do Git. A clonagem desta branch pressupõe sua publicação no GitHub.
 
-## Laravel Sponsors
+## Contas de demonstração
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+| Papel | E-mail | Senha local |
+| --- | --- | --- |
+| Administrador | admin@example.com | Laravel@123 |
+| Professor | professor@example.com | Laravel@123 |
 
-### Premium Partners
+O seeder cria 10 alunos e 2 cursos e vincula os alunos ao professor de demonstração. Executá-lo novamente não duplica esses registros; restaura os dados demonstrativos e as senhas dessas duas contas. Use essas credenciais apenas para a atividade local.
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+Novas contas registradas pelo Breeze recebem o papel `professor`. O registro público não permite escolher `admin`.
 
-## Contributing
+## Permissões
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+| Ação | Visitante | Professor | Administrador |
+| --- | --- | --- | --- |
+| Home, sobre, contato e exemplos com parâmetro | Sim | Sim | Sim |
+| Consultar alunos e alunos por curso | Não | Sim | Sim |
+| Cadastrar e excluir aluno | Não | Não | Sim |
+| Editar aluno | Não | Apenas alunos vinculados a ele | Sim |
+| Escolher professor responsável | Não | Não | Sim |
+| `/admin` | Não | Não | Sim |
+| `/professor` | Não | Sim | Sim |
 
-## Code of Conduct
+`AlunoPolicy` é descoberta automaticamente pelo Laravel pela convenção de nomes. O controller e o `AlunoRequest` verificam autorização no servidor; as views usam `@can`. O administrador escolhe o professor responsável no formulário. O professor não pode trocar esse vínculo por uma requisição manipulada.
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+Relacionamentos: `User hasMany Aluno`, `Aluno belongsTo User`, `Curso hasMany Aluno` e `Aluno belongsTo Curso`. Excluir um usuário deixa seus alunos sem responsável; excluir um curso com alunos é impedido pela chave estrangeira.
 
-## Security Vulnerabilities
+## Atividades e branches
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+| Branch | Atividades | Onde conferir |
+| --- | --- | --- |
+| `tema-01-rotas` | 1 e 2 | `routes/web.php`: textos e parâmetros |
+| `tema-02-controllers` | 3 e 4 | `AlunoController`, sete métodos e `Route::resource` |
+| `tema-03-views` | 5 e 6 | `resources/views/alunos` |
+| `tema-04-blade` | 7, 8 e 9 + desafio | `layouts/app.blade.php`, home, páginas de alunos e `partials/menu.blade.php` |
+| `tema-05-models-eloquent` | 10 e 11 | Model Aluno, migration e `routes/console.php` |
+| `tema-06-seeders` | 12 | `AlunoSeeder`: dez alunos |
+| `tema-07-crud` | 13 | Persistência nos sete métodos do controller |
+| `tema-08-forms-requests` | 14 e 15 + desafio | Formulários, `AlunoRequest` e mensagens em português |
+| `tema-09-relacionamentos` | 16 e 17 + desafio | Model Curso, chave estrangeira e `cursos/show.blade.php` |
+| `tema-10-autenticacao` | 18, 19 e 20 | Breeze, relacionamento User/Aluno e coluna role |
+| `tema-11-middleware` | 21 | `EnsureRole`, alias em `bootstrap/app.php`, `/admin` e `/professor` |
+| `tema-12-policies` | 22 e 23 | `AlunoPolicy`, autorização do CRUD e testes |
 
-## License
+Cada branch parte do tema anterior. As primeiras são etapas didáticas; execute a aplicação completa na última. Na ATV 1, `/alunos` retorna texto; a partir da ATV 4, essa URL passa a ser o índice do CRUD, preservando a versão original no histórico. A migration do relacionamento converte o curso textual em chave estrangeira e preserva os nomes existentes.
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+## Rotas e consultas
+
+```text
+GET     /alunos                 index
+GET     /alunos/create          create
+POST    /alunos                 store
+GET     /alunos/{aluno}         show
+GET     /alunos/{aluno}/edit    edit
+PUT     /alunos/{aluno}         update (também PATCH)
+DELETE  /alunos/{aluno}         destroy
+GET     /cursos/{curso}         alunos de um curso
+```
+
+As rotas da ATV 2 são `/produto/{id}`, `/categoria/{id}` e `/usuario/{id}`. A listagem permite filtrar nome, curso e alunos dos últimos 30 dias. Demonstre as quatro consultas Eloquent pelo terminal:
+
+```powershell
+php artisan alunos:consultar "Informática" "Ana"
+php artisan route:list
+```
+
+## Verificação
+
+```powershell
+php artisan test
+npm run build
+```
+
+Os testes usam SQLite em memória, separado do banco demonstrativo. Cobrem Breeze, CRUD, validações, filtros, seeders, relacionamentos, middleware, autorização por registro e proteção do papel admin. A recuperação de senha usa o mailer `log` padrão local: os e-mails aparecem em `storage/logs/laravel.log`.
+
+## Entrega
+
+Repositório configurado: https://github.com/Rh4yanna/AtivsBack-end. Para publicar apenas as 12 branches desta lista, execute na pasta do repositório:
+
+```powershell
+git push origin tema-01-rotas tema-02-controllers tema-03-views tema-04-blade tema-05-models-eloquent tema-06-seeders tema-07-crud tema-08-forms-requests tema-09-relacionamentos tema-10-autenticacao tema-11-middleware tema-12-policies
+```
+
+Depois, poste na plataforma da atividade o link do repositório e informe a branch `tema-12-policies` e a pasta `ListaDeAtividades-Laravel`. Para conferir os commits: `git log --oneline tema-12-policies -- ListaDeAtividades-Laravel`.
+
+## Referências oficiais
+
+- [Documentação Laravel 12](https://laravel.com/docs/12.x)
+- [Código e compatibilidade do Breeze](https://github.com/laravel/breeze)
+- [Instalação do Breeze](https://laravel.com/docs/11.x/starter-kits#laravel-breeze)

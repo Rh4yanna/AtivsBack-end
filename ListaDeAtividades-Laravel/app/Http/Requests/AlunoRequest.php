@@ -1,11 +1,34 @@
 <?php
 
 namespace App\Http\Requests;
+
+use App\Models\Aluno;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
-class AlunoRequest extends FormRequest {
-    public function authorize(): bool { return true; }
-    public function rules(): array { return ['nome' => ['required','string','min:3','max:255'], 'email' => ['required','email','max:255', Rule::unique('alunos')->ignore($this->route('aluno'))], 'curso_id' => ['required','integer','exists:cursos,id']]; }
-    public function messages(): array { return ['required' => 'O campo :attribute é obrigatório.', 'nome.min' => 'O nome deve ter pelo menos 3 caracteres.', 'email.email' => 'Informe um e-mail válido.', 'email.unique' => 'Este e-mail já está cadastrado.', 'max' => 'O campo :attribute deve ter no máximo :max caracteres.', 'exists' => 'O :attribute selecionado não existe.']; }
-    public function attributes(): array { return ['nome' => 'nome', 'email' => 'e-mail', 'curso_id' => 'curso', 'user_id' => 'professor']; }
+
+class AlunoRequest extends FormRequest
+{
+    // Se a rota tem aluno, é edição; senão, é cadastro.
+    public function authorize(): bool
+    {
+        return $this->user()?->can($this->route('aluno') ? 'update' : 'create', $this->route('aluno') ?? Aluno::class) ?? false;
+    }
+
+    // Na edição, ignora o próprio aluno ao conferir e-mail repetido.
+    // user_id só entra nos dados validados se quem enviou for admin.
+    public function rules(): array
+    {
+        return ['nome' => ['required', 'string', 'min:3', 'max:255'], 'email' => ['required', 'email', 'max:255', Rule::unique('alunos')->ignore($this->route('aluno'))], 'curso_id' => ['required', 'integer', 'exists:cursos,id'], 'user_id' => [Rule::excludeIf(! $this->user()?->isAdmin()), 'nullable', 'integer', Rule::exists('users', 'id')->where('role', 'professor')]];
+    }
+
+    // Desafio da ATV 15: msgs. de validação em português.
+    public function messages(): array
+    {
+        return ['required' => 'O campo :attribute é obrigatório.', 'nome.min' => 'O nome deve ter pelo menos 3 caracteres.', 'email.email' => 'Informe um e-mail válido.', 'email.unique' => 'Este e-mail já está cadastrado.', 'max' => 'O campo :attribute deve ter no máximo :max caracteres.', 'exists' => 'O :attribute selecionado não existe.'];
+    }
+
+    public function attributes(): array
+    {
+        return ['nome' => 'nome', 'email' => 'e-mail', 'curso_id' => 'curso', 'user_id' => 'professor'];
+    }
 }
