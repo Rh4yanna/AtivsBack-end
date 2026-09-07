@@ -11,6 +11,7 @@ class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
+    public function isAdmin(): bool { return $this->role === 'admin'; }
 
     public function alunos(): \Illuminate\Database\Eloquent\Relations\HasMany { return $this->hasMany(Aluno::class); }
 
